@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Presentation/Controllers/CoinController.cs
+using Microsoft.AspNetCore.Mvc;
 using CoffeeMachine.Application.Services;
 using CoffeeMachine.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoffeeMachine.Presentation.DTOs;
 
 namespace CoffeeMachine.Presentation.Controllers
 {
@@ -46,12 +48,12 @@ namespace CoffeeMachine.Presentation.Controllers
         }
 
         [HttpPost("calculate-exchange")]
-        public async Task<IActionResult> CalculateExchange([FromBody] int changeToGive)
+        public async Task<IActionResult> CalculateExchange([FromBody] ChangeRequestDTO request)
         {
             try
             {
-                var exchange = await _coinService.CalculateExchangeAsync(changeToGive);
-                return Ok(new { Success = true, Message = $"Cambio calculado para {changeToGive} colones.", Exchange = exchange });
+                var exchange = await _coinService.CalculateExchangeAsync(request.ChangeToGive);
+                return Ok(new { Success = true, Message = $"Cambio calculado para {request.ChangeToGive} colones.", Exchange = exchange });
             }
             catch (Exception ex)
             {
@@ -59,17 +61,17 @@ namespace CoffeeMachine.Presentation.Controllers
             }
         }
 
-        [HttpPut("update-stock")]
-        public async Task<IActionResult> UpdateCoinStockAfterExchange([FromBody] List<Coin> usedCoins)
+        [HttpGet("can-give-exact-change/{changeToGive}")]
+        public IActionResult CanGiveExactChange(int changeToGive)
         {
             try
             {
-                await _coinService.UpdateCoinStockAfterExchangeAsync(usedCoins);
-                return Ok(new { Success = true, Message = "Stock de monedas actualizado correctamente." });
+                var canGiveChange = _coinService.CanGiveExactChange(changeToGive);
+                return Ok(new { Success = true, CanGiveExactChange = canGiveChange });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Success = false, Message = "Error al actualizar el stock de monedas.", Details = ex.Message });
+                return StatusCode(500, new { Success = false, Message = "Error interno del servidor.", Details = ex.Message });
             }
         }
     }

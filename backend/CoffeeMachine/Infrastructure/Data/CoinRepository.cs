@@ -1,5 +1,9 @@
-﻿using CoffeeMachine.Domain.Entities;
+﻿// Infrastructure/Data/CoinRepository.cs
+using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Application.Interfaces;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CoffeeMachine.Infrastructure.Data
 {
@@ -18,17 +22,15 @@ namespace CoffeeMachine.Infrastructure.Data
             return Task.FromResult(_coins);
         }
 
-        public Task UpdateCoinStockAfterExchangeAsync(List<Coin> usedCoins)
+        public Task<Coin> GetCoinByValueAsync(int coinValue)
         {
-            foreach (var usedCoin in usedCoins)
-            {
-                var coin = _coins.FirstOrDefault(c => c.CoinValue == usedCoin.CoinValue);
-                if (coin != null)
-                {
-                    coin.CoinStock -= usedCoin.CoinStock;
-                }
-            }
+            var coin = _coins.FirstOrDefault(c => c.CoinValue == coinValue);
+            return Task.FromResult(coin);
+        }
 
+        public Task UpdateCoinAsync(Coin coin)
+        {
+            // Como es una lista en memoria, no es necesario hacer mucho más
             return Task.CompletedTask;
         }
 
@@ -49,41 +51,5 @@ namespace CoffeeMachine.Infrastructure.Data
 
             return Task.CompletedTask;
         }
-
-        public async Task<List<Coin>> CalculateExchangeAsync(int changeToGive)
-        {
-            var exchange = new List<Coin>();
-            var remainingChange = changeToGive;
-
-            foreach (var coin in _coins.OrderByDescending(c => c.CoinValue))
-            {
-                if (remainingChange <= 0)
-                {
-                    break;
-                }
-
-                int numCoinsNeeded = remainingChange / coin.CoinValue;
-                int numCoinsAvailable = coin.CoinStock;
-
-                int numCoinsToUse = Math.Min(numCoinsNeeded, numCoinsAvailable);
-
-                if (numCoinsToUse > 0)
-                {
-                    exchange.Add(new Coin(coin.CoinValue, numCoinsToUse));
-                    remainingChange -= numCoinsToUse * coin.CoinValue;
-                }
-            }
-
-            if (remainingChange > 0)
-            {
-                throw new Exception("No hay suficiente cambio disponible.");
-            }
-
-            await UpdateCoinStockAfterExchangeAsync(exchange);
-
-            return exchange;
-        }
-
-
     }
 }

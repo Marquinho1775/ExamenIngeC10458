@@ -19,10 +19,37 @@ namespace CoffeeMachine.Application.Services
             return await _coffeeRepository.GetAllCoffeesAsync();
         }
 
-        public async Task UpdateCoffeeStockAsync(string coffeeName, int quantityToBuy)
+        public async Task PurchaseCoffeeAsync(string coffeeName, int quantityToBuy)
         {
-            await _coffeeRepository.UpdateCoffeeStockAsync(coffeeName, quantityToBuy);
+            if (!IsValidQuantity(quantityToBuy))
+            {
+                throw new ArgumentException("La cantidad a comprar debe ser mayor que cero.");
+            }
+
+            var coffee = await _coffeeRepository.GetCoffeeByNameAsync(coffeeName);
+            if (coffee == null)
+            {
+                throw new Exception($"El café '{coffeeName}' no existe.");
+            }
+
+            if (!IsStockAvailable(coffee, quantityToBuy))
+            {
+                throw new Exception($"No hay suficiente stock para '{coffeeName}'. Stock disponible: {coffee.CoffeeStock}");
+            }
+
+            coffee.CoffeeStock -= quantityToBuy;
+
+            await _coffeeRepository.UpdateCoffeeAsync(coffee);
         }
 
+        private bool IsValidQuantity(int quantity)
+        {
+            return quantity > 0;
+        }
+
+        private bool IsStockAvailable(Coffee coffee, int quantityRequested)
+        {
+            return coffee.CoffeeStock >= quantityRequested;
+        }
     }
 }

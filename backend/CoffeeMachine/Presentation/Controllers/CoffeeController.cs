@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CoffeeMachine.Application.Services;
 using System.Threading.Tasks;
+using CoffeeMachine.Presentation.DTOs;
 
 namespace CoffeeMachine.Presentation.Controllers
 {
@@ -29,19 +30,18 @@ namespace CoffeeMachine.Presentation.Controllers
             }
         }
 
-        [HttpPut("{coffeeName}")]
-        public async Task<IActionResult> UpdateCoffeeStock(string coffeeName, [FromBody] int quantityToBuy)
+        [HttpPost("purchase")]
+        public async Task<IActionResult> PurchaseCoffee([FromBody] PurchaseRequestDTO request)
         {
             try
             {
-                await _coffeeService.UpdateCoffeeStockAsync(coffeeName, quantityToBuy);
-                return Ok(new { Success = true, Message = "Stock actualizado correctamente." });
+                await _coffeeService.PurchaseCoffeeAsync(request.CoffeeName, request.Quantity);
+                return Ok(new { Success = true, Message = "Compra realizada correctamente." });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
-
     }
 }

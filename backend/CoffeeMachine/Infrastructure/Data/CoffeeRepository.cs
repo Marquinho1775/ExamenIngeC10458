@@ -1,7 +1,9 @@
-﻿using CoffeeMachine.Domain.Entities;
+﻿// Infrastructure/Data/CoffeeRepository.cs
+using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Application.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoffeeMachine.Infrastructure.Data
 {
@@ -20,23 +22,16 @@ namespace CoffeeMachine.Infrastructure.Data
             return Task.FromResult(_coffees);
         }
 
-        public async Task UpdateCoffeeStockAsync(string coffeeName, int quantityToBuy)
+        public Task<Coffee> GetCoffeeByNameAsync(string coffeeName)
         {
-            var coffee = _coffees.FirstOrDefault(c => c.CoffeeName == coffeeName);
-            if (coffee == null)
-            {
-                throw new Exception($"El café '{coffeeName}' no existe.");
-            }
-
-            if (coffee.CoffeeStock < quantityToBuy)
-            {
-                throw new Exception($"No hay suficiente stock para '{coffeeName}'. Stock disponible: {coffee.CoffeeStock}");
-            }
-
-            coffee.CoffeeStock -= quantityToBuy;
-
-            await Task.CompletedTask;
+            var coffee = _coffees.FirstOrDefault(c => c.CoffeeName.Equals(coffeeName, StringComparison.OrdinalIgnoreCase));
+            return Task.FromResult(coffee);
         }
 
+        public Task UpdateCoffeeAsync(Coffee coffee)
+        {
+            // Como es una lista en memoria, los objetos se pasan por referencia y ya están actualizados.
+            return Task.CompletedTask;
+        }
     }
 }
