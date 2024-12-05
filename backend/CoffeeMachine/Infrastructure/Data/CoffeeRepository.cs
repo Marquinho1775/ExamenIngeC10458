@@ -35,7 +35,6 @@ namespace CoffeeMachine.Infrastructure.Data
 
             coffee.CoffeeStock -= quantityToBuy;
 
-            // Simula un retraso para representar un proceso asincrónico (opcional)
             await Task.CompletedTask;
         }
 

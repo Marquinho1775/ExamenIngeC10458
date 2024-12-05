@@ -5,7 +5,9 @@ namespace CoffeeMachine.Application.Interfaces
     public interface ICoinRepository
     {
         Task<List<Coin>> GetAllCoinsAsync();
-        Task<bool> UpdateCoinStockAsync();
-        Task<List<Coin>> GetExchangeAsync(List<Coffee> coffeesToBuy, int totalToPay);
+        Task UpdateCoinStockAfterExchangeAsync(List<Coin> usedCoins);
+        Task RegisterCoinsAsync(List<Coin> coinsToAdd);
+
+        Task<List<Coin>> CalculateExchangeAsync(int changeToGive);
     }
 }

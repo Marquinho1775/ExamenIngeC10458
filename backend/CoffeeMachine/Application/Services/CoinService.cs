@@ -19,14 +19,19 @@ namespace CoffeeMachine.Application.Services
             return await _coinRepository.GetAllCoinsAsync();
         }
 
-        public async Task<bool> UpdateCoinStockAsync()
+        public async Task UpdateCoinStockAfterExchangeAsync(List<Coin> usedCoins)
         {
-            return await _coinRepository.UpdateCoinStockAsync();
+            await _coinRepository.UpdateCoinStockAfterExchangeAsync(usedCoins);
         }
 
-        public async Task<List<Coin>> GetExchangeAsync(List<Coffee> coffeesToBuy, int totalToPay)
+        public async Task RegisterCoinsAsync(List<Coin> coinsToAdd)
         {
-            return await _coinRepository.GetExchangeAsync(coffeesToBuy, totalToPay);
+            await _coinRepository.RegisterCoinsAsync(coinsToAdd);
+        }
+
+        public async Task<List<Coin>> CalculateExchangeAsync(int changeToGive)
+        {
+            return await _coinRepository.CalculateExchangeAsync(changeToGive);
         }
 
 
