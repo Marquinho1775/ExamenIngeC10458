@@ -7,6 +7,6 @@ namespace CoffeeMachine.Application.Interfaces
     public interface ICoffeeRepository
     {
         Task<List<Coffee>> GetAllCoffeesAsync();
-        Task UpdateCoffeeStockAsync();
+        Task UpdateCoffeeStockAsync(string coffeeName, int quantityToBuy);
     }
 }

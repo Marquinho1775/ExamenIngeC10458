@@ -29,18 +29,19 @@ namespace CoffeeMachine.Presentation.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateCoffeeStock()
+        [HttpPut("{coffeeName}")]
+        public async Task<IActionResult> UpdateCoffeeStock(string coffeeName, [FromBody] int quantityToBuy)
         {
             try
             {
-                await _coffeeService.UpdateCoffeeStockAsync();
+                await _coffeeService.UpdateCoffeeStockAsync(coffeeName, quantityToBuy);
                 return Ok(new { Success = true, Message = "Stock actualizado correctamente." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Success = false, Message = "Error interno del servidor.", Exception = ex.Message });
+                return BadRequest(new { Success = false, Message = ex.Message });
             }
         }
+
     }
 }

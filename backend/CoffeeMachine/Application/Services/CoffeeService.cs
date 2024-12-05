@@ -19,9 +19,10 @@ namespace CoffeeMachine.Application.Services
             return await _coffeeRepository.GetAllCoffeesAsync();
         }
 
-        public async Task UpdateCoffeeStockAsync()
+        public async Task UpdateCoffeeStockAsync(string coffeeName, int quantityToBuy)
         {
-            await _coffeeRepository.UpdateCoffeeStockAsync();
+            await _coffeeRepository.UpdateCoffeeStockAsync(coffeeName, quantityToBuy);
         }
+
     }
 }
